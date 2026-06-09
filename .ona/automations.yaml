@@ -1,0 +1,19 @@
+tasks:
+  installDeps:
+    name: Install dependencies
+    description: Install npm dependencies for the Astro project.
+    command: |
+      npm install
+    triggeredBy:
+      - postDevcontainerStart
+
+services:
+  dev:
+    name: Astro Dev Server
+    description: Run the Astro development server.
+    commands:
+      start: |
+        npm install
+        npm run dev -- --host
+      ready: |
+        curl -sf http://localhost:4321
