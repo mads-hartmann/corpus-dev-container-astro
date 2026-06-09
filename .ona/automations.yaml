@@ -1,0 +1,30 @@
+tasks:
+  installDeps:
+    name: Install dependencies
+    description: Install npm dependencies from package-lock.json.
+    command: |
+      npm ci
+    triggeredBy:
+      - manual
+      - postDevcontainerStart
+      - prebuild
+
+  build:
+    name: Build
+    description: Build the production site to ./dist/.
+    command: |
+      npm run build
+    triggeredBy:
+      - manual
+    dependsOn:
+      - installDeps
+
+services:
+  dev-server:
+    name: Astro Dev Server
+    description: Run the Astro development server.
+    commands:
+      start: |
+        npm run dev -- --host
+      ready: |
+        curl -sf http://localhost:4321
