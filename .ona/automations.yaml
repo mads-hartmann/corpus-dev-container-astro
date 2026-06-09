@@ -1,0 +1,31 @@
+tasks:
+  installDeps:
+    name: Install dependencies
+    description: Install the project's npm dependencies.
+    command: |
+      npm install
+    triggeredBy:
+      - manual
+      - postDevcontainerStart
+      - prebuild
+
+  build:
+    name: Build
+    description: Build the production site to ./dist/.
+    command: |
+      npm run build
+    triggeredBy:
+      - manual
+    dependsOn:
+      - installDeps
+
+services:
+  dev-server:
+    name: Astro Dev Server
+    description: Run the Astro dev server.
+    commands:
+      start: |
+        ona environment port open 4321 --dont-wait --admission creator_only --name "dev-server"
+        npm run dev -- --host 0.0.0.0 --port 4321
+      ready: |
+        curl -sf http://localhost:4321
