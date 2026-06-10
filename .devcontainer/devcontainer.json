@@ -1,0 +1,11 @@
+{
+	"name": "corpus-dev-container-astro",
+	"image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+	"forwardPorts": [4321],
+	"portsAttributes": {
+		"4321": {
+			"label": "Astro Dev Server",
+			"onAutoForward": "notify"
+		}
+	}
+}
