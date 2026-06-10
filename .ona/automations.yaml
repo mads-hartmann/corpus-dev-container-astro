@@ -29,6 +29,9 @@ services:
     commands:
       start: |
         ona environment port open 4321 --dont-wait --admission creator_only --name "Dev Server"
-        node_modules/.bin/astro dev --config .devcontainer/astro.config.dev.mjs --host 0.0.0.0 --port 4321
+        # --host 0.0.0.0 makes the forwarded port reachable; --allowed-hosts (no value)
+        # tells Vite to accept any Host header so Ona's exposed-port hostname works.
+        # Safe here: this dev server is private to the environment creator.
+        node_modules/.bin/astro dev --host 0.0.0.0 --port 4321 --allowed-hosts
       ready: |
         curl -sf http://localhost:4321
