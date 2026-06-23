@@ -1,0 +1,42 @@
+tasks:
+  installDeps:
+    name: Install dependencies
+    description: Install npm dependencies from the lockfile.
+    command: |
+      npm ci
+    triggeredBy:
+      - manual
+      - postDevcontainerStart
+      - prebuild
+
+  build:
+    name: Build
+    description: Build the production site to ./dist/.
+    command: |
+      npm run build
+    triggeredBy:
+      - manual
+    dependsOn:
+      - installDeps
+
+services:
+  dev-server:
+    name: Astro Dev Server
+    description: Run the Astro dev server.
+    triggeredBy:
+      - manual
+      - postEnvironmentStart
+    commands:
+      start: |
+        ona environment port open 4321 --dont-wait --admission creator_only --name "Astro Dev Server"
+        # Wait for the forwarded URL to be provisioned, then allow that host so
+        # Vite accepts requests proxied through Ona's exposed-port domain.
+        for _ in $(seq 1 30); do
+          host="$(ona environment port get 4321 -f URL | cut -c 9-)"
+          [ -n "$host" ] && break
+          sleep 1
+        done
+        export ASTRO_ALLOWED_HOSTS="$host"
+        npm run dev -- --host 0.0.0.0 --port 4321
+      ready: |
+        curl -sf http://localhost:4321
