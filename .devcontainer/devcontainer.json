@@ -1,0 +1,11 @@
+{
+	"name": "Astro",
+	"image": "mcr.microsoft.com/devcontainers/javascript-node:24",
+	"forwardPorts": [4321],
+	"portsAttributes": {
+		"4321": {
+			"label": "Astro dev server",
+			"onAutoForward": "openPreview"
+		}
+	}
+}
