@@ -1,0 +1,32 @@
+tasks:
+  installDeps:
+    name: Install dependencies
+    description: Install the Node.js dependencies from the lockfile.
+    command: npm ci
+    triggeredBy:
+      - manual
+      - postDevcontainerStart
+      - prebuild
+
+  build:
+    name: Build
+    description: Build the Astro site for production.
+    command: npm run build
+    triggeredBy:
+      - manual
+    dependsOn:
+      - installDeps
+
+services:
+  astro-dev:
+    name: Astro dev server
+    description: Run the Astro development server.
+    triggeredBy:
+      - manual
+      - postEnvironmentStart
+    commands:
+      start: |
+        ona environment port open 4321 --admission creator_only --name "Astro dev server"
+        EXPOSED_HOST="$(ona environment port get 4321 -f URL | cut -c 9-)"
+        __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS="$EXPOSED_HOST" npm run dev -- --host 0.0.0.0
+      ready: curl -fsS http://localhost:4321/
