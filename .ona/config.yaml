@@ -1,0 +1,29 @@
+tasks:
+  install:
+    name: Install dependencies
+    command: npm ci
+    triggeredBy:
+      - manual
+      - postDevcontainerStart
+      - prebuild
+  build:
+    name: Build
+    command: npm run build
+    dependsOn:
+      - install
+    triggeredBy:
+      - manual
+
+services:
+  astro:
+    name: Astro dev server
+    commands:
+      start: |
+        ona environment port open 4321 --admission creator_only --name "Astro dev server"
+        export ONA_EXPOSED_HOST="$(ona environment port get 4321 -f URL | cut -c 9-)"
+        export __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS="$ONA_EXPOSED_HOST"
+        npm run dev -- --host 0.0.0.0
+      ready: curl -fsS http://localhost:4321
+    triggeredBy:
+      - manual
+      - postEnvironmentStart
